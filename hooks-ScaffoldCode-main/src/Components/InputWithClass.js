@@ -1,11 +1,12 @@
 import React from "react";
 
 export default class Input extends React.Component {
+  timer: any;
   constructor() {
     super();
     this.state = {
-      name: "",
-      lastName: "",
+      name: "Harry",
+      lastName: "Potter",
     };
   }
   handleName = (e) => {
@@ -43,6 +44,21 @@ export default class Input extends React.Component {
         <h2>Hello, {this.state.name + " " + this.state.lastName}</h2>
       </>
     );
+  }
+
+  componentDidMount() {
+    document.title = this.state.name + " " + this.state.lastName;
+    this.timer = setInterval(() => {
+      console.log("window.width : ", window.innerWidth);
+    }, 2000);
+  }
+
+  componentDidUpdate() {
+    document.title = this.state.name + " " + this.state.lastName;
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer);
   }
 }
 

@@ -1,9 +1,9 @@
-import Input from "./Components/InputWithClass";
+import Blog from "./Components/Blog";
 
 function App() {
   return (
     <>
-      <Input />
+      <Blog />
     </>
   );
 }
