@@ -1,19 +1,46 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, useReducer } from "react";
+function blogsReducer(state, action) {
+  // state: current
+  // action: present action want to perform
+  switch (action.type) {
+    case "ADD":
+      return [action.blog, ...state];
+    case "REMOVE":
+      return state.filter((blog, index) => index !== action.index);
+    default:
+      return [];
+  }
+}
 //Blogging App using Hooks
 export default function Blog() {
   const [formData, setFormData] = useState({ title: "", content: "" });
-  const [blogs, setBlog] = useState([]);
+  // const [blogs, setBlog] = useState([]);
   const titleRef = useRef(null);
+  const [blogs, dispatch] = useReducer(blogsReducer, []);
   //Passing the synthetic event as argument to stop refreshing the page on submit
+  //Using useEffect() with [] dependency we are actually creating compoentDidMount effect i.e, it will be executed on load
+  useEffect(() => titleRef.current.focus(), []);
+  useEffect(() => {
+    if (blogs.length && blogs[0].title) {
+      document.title = blogs[0].title;
+    } else {
+      document.title = "No Blogs!";
+    }
+  }, [blogs]);
   function handleSubmit(e) {
     e.preventDefault();
-    setBlog([{ title: formData.title, content: formData.content }, ...blogs]);
+    // setBlog([{ title: formData.title, content: formData.content }, ...blogs]);
+    dispatch({
+      type: "ADD",
+      blog: { title: formData.title, content: formData.content },
+    });
     setFormData({ title: "", content: "" });
     titleRef.current.focus();
   }
 
   function removeBlog(i) {
-    setBlog(blogs.filter((blog, index) => i !== index));
+    // setBlog(blogs.filter((blog, index) => i !== index));
+    dispatch({ type: "REMOVE", index: i });
   }
 
   return (
@@ -49,6 +76,7 @@ export default function Blog() {
               placeholder="Content of the Blog goes here.."
               name="content"
               value={formData.content}
+              required
               onChange={(e) =>
                 setFormData({
                   title: formData.title,
